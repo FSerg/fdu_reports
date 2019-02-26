@@ -1,0 +1,89 @@
+import express from 'express';
+import { Client } from 'pg';
+import config from '../config/config';
+import { authRequest } from '../services/authRequest';
+
+const client = new Client({
+  connectionString: config.pgURI
+});
+
+client.connect(err => {
+  if (err) {
+    console.error('PG connection error', err.stack);
+  } else {
+    console.log('PG connected');
+  }
+});
+
+const router = express.Router();
+router.get('/', authRequest, (req, res) => {
+  console.log('GET Discounts');
+  console.log(req.query);
+
+  let sort = 'total';
+  if (req.query.sort != undefined) {
+    sort = req.query.sort;
+  }
+
+  let limit = config.resultsCounts;
+  if (req.query.limit != undefined) {
+    limit = parseInt(req.query.limit, 10);
+  }
+
+  let skip = 0;
+  if (req.query.skip != undefined) {
+    skip = parseInt(req.query.skip, 10);
+  }
+
+  // const query = {
+  //   // give the query a unique name
+  //   name: 'fetch-cheques',
+  //   text: 'SELECT * FROM cheque WHERE client_id = $1',
+  //   values: [req.query.client_id]
+  // };
+
+  // const query = {
+  //   // give the query a unique name
+  //   name: 'fetch-cheques',
+  //   text: 'SELECT * FROM client_bonus ORDER BY value DESC LIMIT 1000'
+  // };
+
+  const query = {
+    name: `client-rating-${sort}-${limit}-${skip}`,
+    text: `
+    SELECT client_total.id, client_total.value AS total, client_bonus.value AS bonus, client.name, client.phone, client.birthday
+FROM client_total, client_bonus, client
+WHERE client_total.id = client.id AND client_bonus.id = client.id
+ORDER BY client_${sort}.value DESC LIMIT ${limit} OFFSET ${skip}
+    `
+  };
+
+  client.query(query, (pg_err, pg_res) => {
+    if (pg_err) {
+      console.log(pg_err.stack);
+      const errorMessage = 'Error to query docs!';
+      // log.error(errorMessage);
+      // log.error(err);
+      return res.status(400).send({ result: errorMessage });
+    } else {
+      // console.log(pg_res.rows);
+
+      const newResult = pg_res.rows.map((item, index) => {
+        const total = parseInt(item.total, 10) * 0.01;
+        const bonus = parseInt(item.bonus, 10) * 0.01;
+        return {
+          index: skip + index + 1,
+          id: item.id,
+          name: item.name,
+          phone: item.phone,
+          birthday: item.birthday,
+          total: total,
+          bonus: bonus
+        };
+      });
+      return res.status(200).send({ result: newResult });
+    }
+  });
+});
+
+export default router;
