@@ -1,5 +1,9 @@
 import express from 'express';
 import { Client } from 'pg';
+// import { parse, format } from 'date-fns';
+// import dateFormat from 'dateformat';
+import moment from 'moment';
+
 import config from '../config/config';
 import { authRequest } from '../services/authRequest';
 
@@ -25,15 +29,20 @@ router.get('/', authRequest, (req, res) => {
     sort = req.query.sort;
   }
 
-  let limit = config.resultsCounts;
+  let limit = parseInt(config.resultsCounts, 10);
   if (req.query.limit != undefined) {
     limit = parseInt(req.query.limit, 10);
   }
+  console.log('limit ', limit);
 
   let skip = 0;
-  if (req.query.skip != undefined) {
-    skip = parseInt(req.query.skip, 10);
+  if (req.query.page != undefined) {
+    const page = parseInt(req.query.page, 10);
+    if (page > 0) {
+      skip = limit * (req.query.page - 1);
+    }
   }
+  console.log('skip ', skip);
 
   // const query = {
   //   // give the query a unique name
@@ -82,6 +91,114 @@ ORDER BY client_${sort}.value DESC LIMIT ${limit} OFFSET ${skip}
         };
       });
       return res.status(200).send({ result: newResult });
+    }
+  });
+});
+
+router.get('/cheques', authRequest, (req, res) => {
+  console.log('GET Cheques');
+  console.log(req.query);
+
+  let limit = parseInt(config.resultsCounts, 10);
+  if (req.query.limit != undefined) {
+    limit = parseInt(req.query.limit, 10);
+  }
+
+  let skip = 0;
+  if (req.query.page != undefined) {
+    const page = parseInt(req.query.page, 10);
+    if (page > 0) {
+      skip = limit * (req.query.page - 1);
+    }
+  }
+
+  let accounts_filter = '';
+  if (req.query.accounts != undefined) {
+    const accounts = req.query.accounts;
+    if (accounts.length > 0) {
+      const accounts_string = accounts.join('\',\'');
+      accounts_filter = `AND cheque.pos IN ('${accounts_string}')`;
+    }
+  }
+
+  let dates_filter = '';
+  if (req.query.period != undefined) {
+    const period = JSON.parse(req.query.period);
+    if (period.date1 && period.date2) {
+      const date1 = moment(period.date1)
+        .startOf('day')
+        .format('YYYY-MM-DD HH:mm:ss');
+      const date2 = moment(period.date2)
+        .endOf('day')
+        .format('YYYY-MM-DD HH:mm:ss');
+
+      dates_filter = `AND stamp >= '${date1}' AND stamp <= '${date2}'`;
+    }
+  }
+
+  const query = {
+    text: `
+    SELECT client_id, uid, number, pos, account.name, type, total, stamp
+FROM cheque, account
+WHERE cheque.pos = account.id ${accounts_filter} ${dates_filter}
+ORDER BY cheque.stamp DESC LIMIT ${limit} OFFSET ${skip}
+    `
+  };
+  // console.log(query);
+
+  client.query(query, (pg_err, pg_res) => {
+    if (pg_err) {
+      console.log(pg_err.stack);
+      const errorMessage = 'Error to query cheques!';
+      // log.error(errorMessage);
+      // log.error(err);
+      return res.status(400).send({ result: errorMessage });
+    } else {
+      // console.log(pg_res.rows);
+
+      const newResult = pg_res.rows.map((item, index) => {
+        const total = parseInt(item.total, 10) * 0.01;
+        return {
+          index: skip + index + 1,
+          id: item.client_id,
+          uid: item.uid,
+          number: item.number,
+          pos: item.pos,
+          pos_name: item.name,
+          type: item.type,
+          total: total,
+          stamp: item.stamp
+        };
+      });
+      return res.status(200).send({ result: newResult });
+    }
+  });
+});
+
+router.get('/accounts', authRequest, (req, res) => {
+  console.log('GET accounts');
+
+  const query = {
+    name: 'accounts',
+    text: `
+    SELECT id AS key, id AS value, name AS text
+FROM account
+WHERE account.role = 'pos'
+ORDER by id
+    `
+  };
+
+  client.query(query, (pg_err, pg_res) => {
+    if (pg_err) {
+      console.log(pg_err.stack);
+      const errorMessage = 'Error to query accounts!';
+      // log.error(errorMessage);
+      // log.error(err);
+      return res.status(400).send({ result: errorMessage });
+    } else {
+      // console.log(pg_res.rows);
+
+      return res.status(200).send({ result: pg_res.rows });
     }
   });
 });

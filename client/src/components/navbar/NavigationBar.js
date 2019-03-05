@@ -16,6 +16,11 @@ class NavigationBar extends Component {
           <Menu.Item as={NavLink} to="/report">
             <Button primary>Рейтинг клиентов (карт)</Button>
           </Menu.Item>
+          {authenticated ? (
+            <Menu.Item as={NavLink} to="/cheques">
+              Чеки
+            </Menu.Item>
+          ) : null}
 
           {!authenticated ? (
             <Menu.Menu position="right">

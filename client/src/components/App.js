@@ -8,9 +8,11 @@ import LoginPage from './authentication/LoginPage';
 import NavigationBar from './navbar/NavigationBar';
 import NavigationBarMobile from './navbar/NavigationBarMobile';
 import Landing from './Landing';
-import ReportPage from './reports/ReportPage';
 import Page from './Page';
 import ModalRootContainer from './modal/ModalRootContainer';
+
+import ReportPage from './reports/ReportPage';
+import ChequesPage from './reports/ChequesPage';
 
 import Config from './Config';
 
@@ -34,7 +36,8 @@ class App extends Component {
   render() {
     const { width } = this.state;
     const isMobile = width <= 768;
-    const contStyle = !isMobile ? { marginTop: '6em' } : { marginTop: '1em' };
+    const marginTop = !isMobile ? '6em' : '1em';
+    const contStyle = { marginTop: marginTop, marginBottom: '2em' };
 
     return (
       <div>
@@ -57,6 +60,7 @@ class App extends Component {
             <Route exact path="/" component={Landing} />
             <Route path="/login" component={LoginPage} />
             <PrivateRoute exact path="/report" component={ReportPage} />
+            <PrivateRoute exact path="/cheques" component={ChequesPage} />
             <Route path="/page" component={Page} />
           </Switch>
         </Container>
