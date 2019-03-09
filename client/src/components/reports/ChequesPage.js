@@ -23,8 +23,8 @@ import {
   setCurrentPosAccounts
 } from '../../actions/chequesActions';
 
-import NavButtons from './NavButtons';
-import DatePicker from './DatePicker';
+import NavButtons from '../common/NavButtons';
+import DatePicker from '../common/DatePicker';
 
 class ChequesPage extends Component {
   componentDidMount() {
@@ -42,8 +42,16 @@ class ChequesPage extends Component {
   };
 
   handlePosSelected = (e, data) => {
-    console.log(data);
     this.props.setCurrentPosAccounts(data.value);
+  };
+
+  getCurrentDates = () => {
+    let datesArray = [];
+    if (this.props.period.date1 && this.props.period.date2) {
+      datesArray.push(this.props.period.date1);
+      datesArray.push(this.props.period.date2);
+    }
+    return datesArray;
   };
 
   render() {
@@ -60,10 +68,14 @@ class ChequesPage extends Component {
                 options={this.props.pos_accounts}
                 placeholder="Выберите кассу"
                 onChange={this.handlePosSelected}
+                value={this.props.current_accounts}
               />
             </Form.Field>
             <Form.Field>
-              <DatePicker changeDate={this.props.setChequesPeriod} />
+              <DatePicker
+                changeDate={this.props.setChequesPeriod}
+                currentDates={this.getCurrentDates()}
+              />
             </Form.Field>
           </Form.Group>
         </Form>
@@ -179,6 +191,8 @@ const mapStateToProps = state => {
     cheques: state.chequesStore.cheques,
     pos_accounts: state.chequesStore.pos_accounts,
     page: state.chequesStore.page,
+    period: state.chequesStore.period,
+    current_accounts: state.chequesStore.current_accounts,
     isLoading: state.chequesStore.isLoading,
     error: state.chequesStore.error
   };

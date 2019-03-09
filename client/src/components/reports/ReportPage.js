@@ -12,7 +12,7 @@ import {
   setReportType
 } from '../../actions/reportsActions';
 
-import NavButtons from './NavButtons';
+import NavButtons from '../common/NavButtons';
 
 class ReportPage extends Component {
   clickReport = reportType => {

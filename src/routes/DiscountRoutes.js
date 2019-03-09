@@ -1,7 +1,5 @@
 import express from 'express';
 import { Client } from 'pg';
-// import { parse, format } from 'date-fns';
-// import dateFormat from 'dateformat';
 import moment from 'moment';
 
 import config from '../config/config';

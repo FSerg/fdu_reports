@@ -6,6 +6,7 @@ import config from './config/config';
 
 import UsersRoutes from './routes/UsersRoutes';
 import DiscountRoutes from './routes/DiscountRoutes';
+import StatsRoutes from './routes/StatsRoutes';
 
 import log from './services/Logging';
 
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api/users', UsersRoutes);
 // other - routes
 app.use('/api/discounts', DiscountRoutes);
+app.use('/api/stats', StatsRoutes);
 
 // test route
 app.get('/test', (req, res) => {

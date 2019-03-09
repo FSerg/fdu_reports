@@ -4,7 +4,7 @@ import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import ruLocale from 'react-semantic-ui-datepickers/dist/locales/ru-RU';
 import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
 
-const DatePicker = ({ changeDate }) => {
+const DatePicker = ({ changeDate, currentDates }) => {
   const handleConfirm = dates => {
     // console.log(dates);
     if (!dates) {
@@ -23,6 +23,7 @@ const DatePicker = ({ changeDate }) => {
       locale={ruLocale}
       placeholder="Выберите период"
       onDateChange={handleConfirm}
+      selected={currentDates}
       type="range"
       id="x123"
     />
@@ -30,7 +31,8 @@ const DatePicker = ({ changeDate }) => {
 };
 
 DatePicker.propTypes = {
-  changeDate: PropTypes.func.isRequired
+  changeDate: PropTypes.func.isRequired,
+  currentDates: PropTypes.array
 };
 
 export default DatePicker;

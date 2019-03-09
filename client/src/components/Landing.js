@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Container, Grid, Header, Button } from 'semantic-ui-react';
+import { Container, Header, Button } from 'semantic-ui-react';
 
 const Landing = ({ isAuthenticated }) => (
   <Container text textAlign="center" style={{ padding: '8em 0em' }}>

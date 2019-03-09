@@ -50,18 +50,20 @@ class NavigationBarMobile extends Component {
 
                 {!authenticated
                   ? [
-                    <Dropdown.Item as={NavLink} to="/login">
+                    <Dropdown.Item as={NavLink} to="/login" key={1}>
                         Вход всистему
                     </Dropdown.Item>,
-                    <Dropdown.Item as={NavLink} to="/signup">
+                    <Dropdown.Item as={NavLink} to="/signup" key={2}>
                         Регистрация
                     </Dropdown.Item>
                   ]
                   : [
-                    <Dropdown.Item as={NavLink} to="/profile">
+                    <Dropdown.Item as={NavLink} to="/profile" key={3}>
                         Профиль
                     </Dropdown.Item>,
-                    <Dropdown.Item onClick={signoutUser}>Выход</Dropdown.Item>
+                    <Dropdown.Item onClick={signoutUser} key={4}>
+                        Выход
+                    </Dropdown.Item>
                   ]}
               </Dropdown.Menu>
             </Dropdown>

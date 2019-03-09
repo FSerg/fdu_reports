@@ -5,8 +5,7 @@ import {
   AUTH_SUCCESS,
   UNAUTH_USER,
   AUTH_ERROR,
-  AUTH_STARTED,
-  AUTH_LOGINWAIT
+  AUTH_STARTED
 } from './authTypes';
 import history from '../history';
 
