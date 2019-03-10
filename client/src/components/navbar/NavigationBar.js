@@ -13,15 +13,18 @@ class NavigationBar extends Component {
     return (
       <Menu fixed="top">
         <Container>
-          <Menu.Item as={NavLink} to="/report">
-            <Button primary>Рейтинг клиентов (карт)</Button>
+          <Menu.Item as={NavLink} to="/" key={1}>
+            Главная
           </Menu.Item>
           {authenticated
             ? [
-              <Menu.Item as={NavLink} to="/cheques" key={1}>
-                  Чеки
+              <Menu.Item as={NavLink} to="/report" key={2}>
+                  Рейтинг карт
               </Menu.Item>,
-              <Menu.Item as={NavLink} to="/stats" key={2}>
+              <Menu.Item as={NavLink} to="/cheques" key={3}>
+                  Журнал чеков
+              </Menu.Item>,
+              <Menu.Item as={NavLink} to="/stats" key={4}>
                   Статистика
               </Menu.Item>
             ]

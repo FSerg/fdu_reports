@@ -71,7 +71,7 @@ class StatsCards extends Component {
               />
             </Grid.Column>
           </Grid>
-          <Divider horizontal>Данные по тем у кого заполнено имя</Divider>
+          <Divider horizontal>Данные по картам с заполненным именем</Divider>
           <Grid columns="equal">
             <Grid.Column>
               <SmallTable

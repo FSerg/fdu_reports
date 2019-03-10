@@ -6,7 +6,6 @@ import { Container } from 'semantic-ui-react';
 import PrivateRoute from './authentication/AuthenticatedRoute';
 import LoginPage from './authentication/LoginPage';
 import NavigationBar from './navbar/NavigationBar';
-import NavigationBarMobile from './navbar/NavigationBarMobile';
 import Landing from './Landing';
 import Page from './Page';
 import ModalRootContainer from './modal/ModalRootContainer';
@@ -54,7 +53,7 @@ class App extends Component {
           }}
         />
         <ModalRootContainer />
-        {isMobile ? <NavigationBarMobile /> : <NavigationBar />}
+        <NavigationBar />
 
         <Container style={contStyle}>
           <Switch>
