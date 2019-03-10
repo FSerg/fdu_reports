@@ -142,9 +142,7 @@ class ChequesPage extends Component {
                           currency: 'RUB'
                         }).format(item.total)}
                       </Table.Cell>
-                      <Table.Cell>
-                        {item.pos} - {item.pos_name}
-                      </Table.Cell>
+                      <Table.Cell>{item.pos_name}</Table.Cell>
                     </Table.Row>
                   );
                 })}

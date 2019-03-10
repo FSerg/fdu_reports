@@ -68,7 +68,7 @@ class ReportPage extends Component {
                   <Table.HeaderCell>Телефон</Table.HeaderCell>
                   <Table.HeaderCell>Дата рождения</Table.HeaderCell>
                   <Table.HeaderCell>Общая сумма</Table.HeaderCell>
-                  <Table.HeaderCell>Текущий бонусы</Table.HeaderCell>
+                  <Table.HeaderCell>Текущие бонусы</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
 
