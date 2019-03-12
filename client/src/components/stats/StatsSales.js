@@ -15,6 +15,8 @@ import {
 } from 'recharts';
 
 import {
+  Grid,
+  Table,
   Divider,
   Header,
   Message,
@@ -43,7 +45,6 @@ class StatsSales extends Component {
   }
 
   handlePosSelected = (e, data) => {
-    console.log(data);
     this.props.setCurrentPosAccounts(data.value);
   };
 
@@ -67,29 +68,66 @@ class StatsSales extends Component {
         ) : null}
 
         <Segment>
-          <Header as="h3">Статистика продаж</Header>
-          <Form>
-            <Form.Group widths="equal">
-              <Form.Field>
-                <Dropdown
-                  selection
-                  multiple
-                  closeOnChange
-                  name="poses"
-                  options={this.props.pos_accounts}
-                  placeholder="Выберите кассу"
-                  onChange={this.handlePosSelected}
-                  value={this.props.current_accounts}
-                />
-              </Form.Field>
-              <Form.Field>
-                <DatePicker
-                  changeDate={this.props.setStatsPeriod}
-                  currentDates={this.getCurrentDates()}
-                />
-              </Form.Field>
-            </Form.Group>
-          </Form>
+          <Grid columns="equal">
+            <Grid.Column>
+              <Header as="h3">Статистика продаж</Header>
+              <Form>
+                <Form.Group widths="equal">
+                  <Form.Field>
+                    <Dropdown
+                      selection
+                      multiple
+                      closeOnChange
+                      name="poses"
+                      options={this.props.pos_accounts}
+                      placeholder="Выберите кассу"
+                      onChange={this.handlePosSelected}
+                      value={this.props.current_accounts}
+                    />
+                  </Form.Field>
+                  <Form.Field>
+                    <DatePicker
+                      changeDate={this.props.setStatsPeriod}
+                      currentDates={this.getCurrentDates()}
+                    />
+                  </Form.Field>
+                </Form.Group>
+              </Form>
+            </Grid.Column>
+            <Grid.Column>
+              <Table compact size="large">
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Продаж всего</Table.HeaderCell>
+                    <Table.HeaderCell>Начислено</Table.HeaderCell>
+                    <Table.HeaderCell>Списано</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  <Table.Row>
+                    <Table.Cell>
+                      {new Intl.NumberFormat('ru-RU', {
+                        style: 'currency',
+                        currency: 'RUB'
+                      }).format(this.props.totalSales)}
+                    </Table.Cell>
+                    <Table.Cell positive>
+                      {new Intl.NumberFormat('ru-RU', {
+                        style: 'currency',
+                        currency: 'RUB'
+                      }).format(this.props.bonusesAccrued)}
+                    </Table.Cell>
+                    <Table.Cell negative>
+                      {new Intl.NumberFormat('ru-RU', {
+                        style: 'currency',
+                        currency: 'RUB'
+                      }).format(this.props.bonusesCharges)}
+                    </Table.Cell>
+                  </Table.Row>
+                </Table.Body>
+              </Table>
+            </Grid.Column>
+          </Grid>
 
           <Divider horizontal>
             Сумма продаж (по выбранным точкам) за период
@@ -190,6 +228,9 @@ StatsSales.propTypes = {
   setStatsPeriod: PropTypes.func.isRequired,
   getPosAccounts: PropTypes.func.isRequired,
   setCurrentPosAccounts: PropTypes.func.isRequired,
+  totalSales: PropTypes.number,
+  bonusesAccrued: PropTypes.number,
+  bonusesCharges: PropTypes.number,
   sales1: PropTypes.array,
   sales2: PropTypes.array,
   sales3: PropTypes.array,
@@ -200,6 +241,9 @@ StatsSales.propTypes = {
 };
 
 StatsSales.defaultProps = {
+  totalSales: 0,
+  bonusesAccrued: 0,
+  bonusesCharges: 0,
   sales1: [],
   sales2: [],
   sales3: [],
@@ -211,6 +255,9 @@ StatsSales.defaultProps = {
 
 const mapStateToProps = state => {
   return {
+    totalSales: state.salesStore.totalSales,
+    bonusesAccrued: state.salesStore.bonusesAccrued,
+    bonusesCharges: state.salesStore.bonusesCharges,
     sales1: state.salesStore.sales1,
     sales2: state.salesStore.sales2,
     sales3: state.salesStore.sales3,

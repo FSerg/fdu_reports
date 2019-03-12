@@ -14,6 +14,9 @@ import {
 } from '../actions/salesTypes';
 
 const initialState = {
+  totalSales: 0,
+  bonusesAccrued: 0,
+  bonusesCharges: 0,
   sales1: [],
   sales2: [],
   sales3: [],
@@ -30,8 +33,15 @@ export default (state = initialState, action) => {
   case SALES1_GET_STARTED:
     return { ...state, error1: '' };
 
-  case SALES1_GET_FINISHED:
-    return { ...state, sales1: action.payload, error1: '' };
+  case SALES1_GET_FINISHED: {
+    // calculate the sales totals
+    const sales1 = action.payload;
+    let totalSales = 0;
+    for (let count = 0; count < sales1.length; count++) {
+      totalSales = totalSales + sales1[count].chequetotal;
+    }
+    return { ...state, sales1: sales1, totalSales: totalSales, error1: '' };
+  }
 
   case SALES1_GET_ERROR:
     return { ...state, error1: action.payload };
@@ -39,8 +49,23 @@ export default (state = initialState, action) => {
   case SALES2_GET_STARTED:
     return { ...state, error2: '' };
 
-  case SALES2_GET_FINISHED:
-    return { ...state, sales2: action.payload, error2: '' };
+  case SALES2_GET_FINISHED: {
+    // calculate the bonuses totals
+    const sales2 = action.payload;
+    let bonusesAccrued = 0;
+    let bonusesCharges = 0;
+    for (let count = 0; count < sales2.length; count++) {
+      bonusesAccrued = bonusesAccrued + sales2[count].added;
+      bonusesCharges = bonusesCharges + sales2[count].deducted;
+    }
+    return {
+      ...state,
+      sales2: sales2,
+      bonusesAccrued: bonusesAccrued,
+      bonusesCharges: bonusesCharges,
+      error2: ''
+    };
+  }
 
   case SALES2_GET_ERROR:
     return { ...state, error2: action.payload };
