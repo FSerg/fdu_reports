@@ -201,4 +201,73 @@ ORDER by id
   });
 });
 
+router.get('/fraud', authRequest, (req, res) => {
+  console.log('GET fraud cards');
+
+  let date1 = moment()
+    .subtract(30, 'days')
+    .startOf('day')
+    .format('YYYY-MM-DD HH:mm:ss');
+  let date2 = moment()
+    .endOf('day')
+    .format('YYYY-MM-DD HH:mm:ss');
+  let dates_filter = `AND stamp >= '${date1}' AND stamp <= '${date2}'`;
+  if (req.query.period != undefined) {
+    const period = JSON.parse(req.query.period);
+    if (period.date1 && period.date2) {
+      date1 = moment(period.date1)
+        .startOf('day')
+        .format('YYYY-MM-DD HH:mm:ss');
+      date2 = moment(period.date2)
+        .endOf('day')
+        .format('YYYY-MM-DD HH:mm:ss');
+
+      dates_filter = `AND stamp >= '${date1}' AND stamp <= '${date2}'`;
+    }
+  }
+
+  const query = {
+    text: `
+    select * from (
+      select client_id as id,
+        sum(chequecount) as chequecount,
+        sum(chequetotal) as chequetotal,
+        count(groupdate) as datecounter,
+        count(groupdate) FILTER (WHERE chequecount > 1) as baddatecounter
+      from
+        (
+        select
+          stamp::date as groupdate,
+          client_id,
+          count(cheque.uid) as chequecount,
+          sum(cheque.total)/100 as chequetotal
+        from cheque
+        where true ${dates_filter}
+        group by groupdate, client_id) t1
+      group by client_id
+      order by
+        baddatecounter desc,
+        datecounter desc,
+        chequecount desc,
+        client_id ) t2
+    where baddatecounter>0
+    limit 100
+    `
+  };
+
+  client.query(query, (pg_err, pg_res) => {
+    if (pg_err) {
+      console.log(pg_err.stack);
+      const errorMessage = 'Error to query fraud!';
+      // log.error(errorMessage);
+      // log.error(err);
+      return res.status(400).send({ result: errorMessage });
+    } else {
+      // console.log(pg_res.rows);
+
+      return res.status(200).send({ result: pg_res.rows });
+    }
+  });
+});
+
 export default router;

@@ -26,6 +26,9 @@ class NavigationBar extends Component {
               </Menu.Item>,
               <Menu.Item as={NavLink} to="/stats" key={4}>
                   Статистика
+              </Menu.Item>,
+              <Menu.Item as={NavLink} to="/fraud" key={5}>
+                  Подозрительные карты
               </Menu.Item>
             ]
             : null}

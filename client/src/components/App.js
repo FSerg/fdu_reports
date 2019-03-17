@@ -13,6 +13,7 @@ import ModalRootContainer from './modal/ModalRootContainer';
 import ReportPage from './reports/ReportPage';
 import ChequesPage from './reports/ChequesPage';
 import StatsPage from './stats/StatsPage';
+import FraudPage from './reports/FraudPage';
 
 import Config from './Config';
 
@@ -62,6 +63,7 @@ class App extends Component {
             <PrivateRoute exact path="/report" component={ReportPage} />
             <PrivateRoute exact path="/cheques" component={ChequesPage} />
             <PrivateRoute exact path="/stats" component={StatsPage} />
+            <PrivateRoute exact path="/fraud" component={FraudPage} />
             <Route path="/page" component={Page} />
           </Switch>
         </Container>
