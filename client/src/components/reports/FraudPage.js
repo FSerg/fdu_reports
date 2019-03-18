@@ -65,7 +65,7 @@ class FraudPage extends Component {
 
         {this.props.frauds.length > 0 ? (
           <div>
-            <Divider horizontal>Подозритльно активные карты</Divider>
+            <Divider horizontal>Подозрительно активные карты</Divider>
 
             <Table compact="very" selectable>
               <Table.Header>
